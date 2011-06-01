@@ -1,0 +1,11 @@
+<h3>Category list</h3>
+
+<%= form_tag ({:controller => 'pdm_settings', :action => 'add_category'}, :multipart => true) %>
+
+	<p><label><%=l(:label_category)%></label><br />
+	<%= collection_select(:name, :id, @categories, :id, :name, options ={}, :class =>"category") %>
+
+	<p><label><%=l(:label_add_category)%></label><br />
+	<%= text_field_tag('name', '', :size => 60)%></p>
+	<%= submit_tag l(:button_category_add) %>
+<%= form_tag %>

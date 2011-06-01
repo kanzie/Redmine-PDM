@@ -1,0 +1,90 @@
+#require 'time'
+
+class PdmRevisionsController < ApplicationController
+	
+  def index
+
+    @project = Project.find(params[:project_id])
+    @document = PdmDocument.find(params[:id])
+	  @revisions = PdmRevision.find(:all, :order => "created_date DESC", :conditions => [ "pdm_document_id = ?", @document.id ] )
+	  #@document.locked_by = User.find(params[:id])
+	  #@document.time_stamp = Time.now
+  end
+
+  def download
+    @revision = PdmRevision.find(params[:id])  
+    #documentName = strip_string(document.attachment,'_','')
+    #file_copy("#{RAILS_ROOT}/files/"+document.attachment,"#{RAILS_ROOT}/files/"+documentName)
+    #send_file("#{RAILS_ROOT}/files/"+documentName))
+    #delete_file("#{RAILS_ROOT}/files/"+documentName)
+      
+    send_file ("#{RAILS_ROOT}/files/" + @revision.attachment)
+    
+    directory = "#{RAILS_ROOT}/files/"
+    revisionName = @revision.attachment
+    trash, newFileName = revisionName.split(/_/, 2)
+    
+    FileUtils.copy(directory+revisionName, directory+newFileName)
+    send_file ("#{RAILS_ROOT}/files/" + newFileName, :stream => false)
+    File.delete(directory+newFileName)
+  end
+  
+  def downloadLatest
+    @project = Project.find(params[:project_id])
+    @document = PdmDocument.find(params[:id])
+    @revision = PdmRevision.find(:first, :order => "created_date DESC", :conditions => [ "pdm_document_id = ?", @document.id ] )
+    
+    redirect_to :action => 'download', :project_id => @project, :id => @revision
+    
+  end
+
+  def uploadNewRevision
+	
+  	@project = Project.find(params[:project_id])
+    @document = PdmDocument.find(params[:id])
+    upload = params[:upload]
+  	comment = params[:comment]	
+  	
+	if User.current.id == @document.locked_by
+		@document.update_attributes(:locked_by => nil, :locked_timestamp => nil)
+		@document.save
+
+  	    if upload != nil && !comment.empty?
+    	    documentName = upload['datafile'].original_filename
+            directory = "#{RAILS_ROOT}/files"
+            path = File.join(directory, documentName)
+
+  	        File.open(path, "wb") { |f| f.write(upload['datafile'].read) }
+  	
+    	    pdmrevision = PdmRevision.new(:commit_message => params[:comment], :attachment => documentName, :created_by => User.find(User.current.id), :created_date => Time.now, :pdm_document_id => params[:id])
+    	    pdmrevision.save
+  	  
+  	        redirect_to :action => 'index', :project_id => @project, :id => @document
+  	  
+		else
+		    @document.update_attributes(:locked_by => nil, :locked_timestamp => nil)
+			redirect_to :action => 'index', :project_id => @project, :id => @document
+		end
+				
+	end
+		
+	end	
+
+
+  
+  def changeLock
+	@project = Project.find(params[:project_id])
+    @document = PdmDocument.find(params[:id])
+	
+	
+	if @document.locked_by == nil	    
+		@document.update_attributes(:locked_by => User.current.id, :locked_timestamp => Time.now)
+		@document.save
+		redirect_to :action => 'downloadLatest', :project_id => @project, :id => @document
+	elsif User.current.id == @document.locked_by
+		@document.update_attributes(:locked_by => nil, :locked_timestamp => nil)
+	end
+  #redirect_to :action => 'index', :project_id => @project, :id => @document
+  end
+
+end

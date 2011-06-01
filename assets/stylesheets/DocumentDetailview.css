@@ -1,0 +1,119 @@
+#containerFieldset
+{
+	width:900px;
+}
+
+.labelBold
+{
+	font-size:16px;
+	font-weight:bold;
+	padding-left: 10px;
+	padding-right: 5px;
+}
+
+.labelSimple
+{
+	padding-right: 10px;
+}
+
+#documentContainer
+{
+    padding:15px;
+}
+
+.descriptionText {
+	color: #484848;
+}
+
+.extend {
+	color: white;
+	border-left: 1px solid white;
+	padding-left: 10px;
+}
+
+#documentInfo
+{
+    background-color:#507AAA;
+    border:2px solid #2C4056;
+    padding-top: 10px;
+    color: #fff;
+}
+
+.revisionContainer
+{
+	padding:15px;
+}
+
+.revInfo
+{
+    background-color:#f6f7f8;
+    border:2px solid #507AAA;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+.button
+{
+    padding:8px;
+    float:right;
+    border:2px solid #2c4056;
+    background-color:#f6f7f8;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 20px;
+    margin-right: 10px;
+}
+
+.fieldsetDetailview
+{
+    background-color:#f6f7f8;
+    padding:5px;
+    margin:10px;
+	
+}
+
+.linkStyle
+{
+    text-decoration:none;
+    color:#ffffff;
+}
+
+.deleteIcon {
+	width: 32px;
+	height: 32px;
+}
+
+.downloadBox
+{
+
+    padding:8px;
+    float:right;
+/**    border:2px solid green;
+    background-color:#BDFFBD;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    **/
+}
+
+.deleteBox
+{
+    padding:8px;
+    margin-right: 15px;
+    float:right;
+    border:2px solid red;
+    background-color:#FFB3B3;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    #E60000
+}
+
+#uploadDiv
+{
+    padding:5px;
+    margin:10px;
+    width:500px;
+    border:2px solid #507AAA;
+    background-color:#f6f7f8;    
+}
+

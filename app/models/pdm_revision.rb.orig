@@ -1,0 +1,6 @@
+class PdmRevision < ActiveRecord::Base
+
+	belongs_to :document
+
+
+end

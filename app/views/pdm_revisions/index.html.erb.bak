@@ -1,0 +1,93 @@
+<h2><%=l(:label_my)%></h2>
+
+<div id='uploadDiv' style='display:none;'>
+
+	<%= form_tag ({:controller => 'pdm_revisions', :action => 'uploadNewRevision', :project_id => @project, :id => @document}, :multipart => true) %>
+		<h3>File Upload</h3>	
+	
+		<p><label for="upload_file">Select File</label> :<%= file_field 'upload', 'datafile', :size => 30 %></p>
+	
+		<p><label for="file_description">Add comment</label> : </p>
+	
+		<%= text_field_tag 'comment', '', :size => 20, :id => nil  %>
+		<br />
+		<h4>
+		<%=l(:label_information_checkin_view)%>
+		</h4>
+		<%= submit_tag l(:label_checkin_button) %>
+	
+	<%= form_tag %>
+
+</div>
+
+<div id="Container">
+<fieldset id="containerFieldset">
+	<!--This a temporary label that is set with a static text. the label will display the document.name in the future-->
+	<legend><%=@document.title%></legend>
+		<div id="documentContainer">
+		<fieldset id="documentInfo">
+			<legend><%=l(:label_document_information)%></legend>
+			<label class="labelBold"><%=l(:label_document_name)%></label>
+			<label class="labelSimple"><%= @document.title %></label>
+			<label class="labelBold"><%=l(:label_document_type)%></label>
+			<label class="labelSimple">Document type</label>
+			<label class="labelBold"><%=l(:label_document_revisions)%></label>
+			<label class="labelSimple"><%= @revisions.count%></label>
+
+			<div class=checkinout>
+			<%=puts @document%> 
+			<% if @document.locked_by == nil%>
+			    
+			    <%=link_to l(:label_checkout), :controller => "pdm_revisions", :action => "changeLock", :project_id => @project, :id => @document, :class => 'lableSimple'%>
+			<% elsif @document.locked_by == User.current.id%>
+			    <%=link_to_function l(:label_checkin), :controller => "pdm_revisions",:project_id => @project, :id => @document, :class => 'lableSimple', :onclick => 'Element.show("uploadDiv"); return false;'%>
+			<% end %>
+			
+			</div>
+			
+			<div class=downloadBox>
+			<%=link_to l(:link_download_latest), :controller => "pdm_revisions", :action => "downloadLatest", :project_id => @project, :id => @document%>
+			</div>
+			
+			<fieldset class="fieldsetDetailview">
+				<p class="descriptionText"><%= @document.description %></p>
+			</fieldset>
+			<% if @document.locked_by != nil %>
+				<label class="labelBold"><%=l(:label_locked_by)%></label>
+				<label class="labelSimple"><%= User.find(@document.locked_by) %></label>
+				<label class="labelBold"><%=l(:label_lock_time)%></label>
+				<label class="labelSimple"><%= @document.locked_timestamp %></label>
+			<% end %>
+		</fieldset>
+		</div>
+	<% @revisions.each do |revision| %>	
+		<div class="revisionContainer">
+	 			<fieldset id="revInfo">
+				<legend>Revision: </legend>
+				<label class="labelBold"><%=l(:label_revision_updated_by)%></label>
+				<label class="labelSimple"><%= User.find(revision.created_by) %></label>
+				<label class="labelBold"><%=l(:label_revision_date)%></label>
+				<label class="labelSimple"><%=revision.created_date %></label>
+				<div class=downloadBox>
+				<%=link_to l(:link_revision_download), :controller => "pdm_revisions", :action => "download", :project_id => @project, :id => revision.id%>
+				</div>
+				<fieldset class="fieldsetDetailview">
+					<p class="descriptionText"><%=revision.commit_message %></p>
+				</fieldset>
+	 			</fieldset>
+		</div>
+	<% end %>
+	<div class=deleteBox>
+	<%=link_to l(:link_hide_and_archive), :controller => "pdm_documents", :action => "index" , :project_id => @project%>
+    </div>
+</fieldset>
+</div>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'DocumentDetailview', :plugin => 'redmine_pdm' %>
+    $(document).ready(function() {alert('jquery lever');});
+<% end %>
+
+<script type="text/javascript">$(document).ready(function() { alert('jquery lever');});</script>
+</body>
+</html>

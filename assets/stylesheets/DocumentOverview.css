@@ -1,0 +1,79 @@
+	a:link 
+	{
+		text-decoration:none;
+	}
+	
+	a:visited 
+	{
+		text-decoration:none;
+	}
+	
+	h1
+	{
+		font-size:1.5em;
+	}
+	
+	#Container
+	{
+		font-family:"Verdana", Arial, Helvetica;
+		font-size:1em;
+	}
+
+	#Notification
+	{
+		border:2px solid #507AAA;
+		font-size:1.2em;
+
+	}
+	
+	#UploadButton
+	{
+		text-align:right;
+	}
+	
+	#FileTable
+	{
+		width:100%;
+	}
+	
+    #document tr.odd 
+    {background-color:#f6f7f8;}
+    #document tr.even 
+    {background-color: #fff;}
+    
+    #FileTable th, tr
+	{
+		font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+		font-size:1em;
+		padding:3px 7px 2px 7px;		
+	}
+	
+	#FileTable th
+	{
+		font-size:1em;
+		text-align:left;
+		padding-top:5px;
+		padding-bottom:4px;
+		background-color:#507AAA;
+		color:#ffffff;	
+	}
+	
+	
+	#LeftBox
+	{
+		float: left;
+	}
+	
+	.centerTd {
+		text-align: center;
+	}
+	
+	#uploadDiv
+{
+    padding:5px;
+    margin:10px;
+    width:600px;
+    border:2px solid #507AAA;
+    background-color:#f6f7f8;    
+}
+	

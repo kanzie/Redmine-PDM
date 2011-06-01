@@ -1,0 +1,81 @@
+<div class="contextual">
+<!--This link opens up the upload form for documents-->
+<%= link_to l(:label_document_new),
+                          {:project_id => @project},
+                          :class => 'icon icon-add',
+                          :onclick => 'Element.show("uploadDiv"); return false;' %>
+</div>
+
+<h2><%=l(:label_my)%></h2>
+<!--The upload documents form contains fields that will give parameters to the uploadFile function in the documents controller,
+    and labels for those-->
+<div id='uploadDiv' style='display:none;'>
+	<%= form_tag ({:controller => 'pdm_documents', :action => 'uploadFile', :project_id => @project},:multipart => true) %>
+		<h3><%= l(:label_file_upload) %></h3>	
+		<p>
+			<label for="upload_datafile"><%= l(:label_select_file) %></label>: 
+			<%= file_field 'upload', 'datafile', :size => 30 %>
+		</p>		
+		<p><%= l(:label_max_file_size) %> <%= number_to_human_size(Setting.file_max_size_displayed.to_i.megabytes) %></p>
+		<p>
+			<label><%=l(:label_category)%></label><br />
+			<%= collection_select(:name, :id, @categories, :id, :name, options ={}, :class =>"category") %>
+		</p>
+		<p>
+			<label><%=l(:label_upload_document_title)%></label><br />
+			<%= text_field_tag('title', '', :size => 60, :id => nil)%>
+		</p>
+		<p>
+			<label><%=l(:label_upload_document_description)%></label><br />
+			<%= text_area_tag('comment', '', :size => "50x10")%>
+		</p>
+		<%= submit_tag l(:button_create) %>
+		</form>
+</div>
+
+    <!--The Container contains the file table with all the documents in the database and writes them out with a loop.
+        If no documents are available in the file table, a message takes it place stating that there are no documents present.
+        Each of the fields of each row in the table leads to a link to the detail view of that document. It also has an icon in
+        the far left column that triggers the downloadLatest function in the revisions controller-->
+<div id="Container">
+	<table id="FileTable">
+	
+		  <thead><tr>
+		    <th><%= l(:label_download) %></th>
+		    <th><%= l(:label_category) %></th>
+		    <th><%= l(:label_name) %></th>
+		    <th><%= l(:label_last_updated) %></th>
+		    <th><%= l(:label_last_revision_by) %></th>
+		    <th><%= l(:label_count_revision) %></th>
+		  </tr></thead>
+			<% 
+			if not @documents.nil? %>
+			 	<% @documents.each do |document| %>
+				  <tr class="document" <%= cycle("odd", "even") %>">
+					<td class="centerTd"><%= link_to(image_tag('document.png'), { :controller => 'pdm_revisions', :action => 'downloadLatest', :project_id => @project, :id => document.id}) %></td>
+					<td><%= link_to(document.pdm_category.name, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
+					<td><%= link_to(document.title, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
+				   	<td class="centerTd"><%= link_to(document.pdm_revisions.last.created_date, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
+					<td><%= link_to(User.find(document.pdm_revisions.last.created_by), { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
+					<td class="centerTd"><%= link_to(document.pdm_revisions.count, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
+				  </tr>
+				<% end %>
+			<% end %>
+	</table>
+</div>
+
+	<% if @documents.empty? %>
+		<div id="Notification" >
+		<p class="Notification"><%= l(:label_no_data) %></p>
+		</div>
+	<% end %>
+
+<!--This sidebar contains statistics for how many documents are in the project-->
+<% content_for :sidebar do %>
+    <h3></h3>
+
+<% end %>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'DocumentOverview', :plugin => 'redmine_pdm' %>
+<% end %>

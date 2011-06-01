@@ -1,0 +1,31 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+
+  id: 
+
+  commit_message: MyString
+
+  attachment: MyString
+
+  created_by: MyString
+
+  created_date: 2011-05-19 16:35:38
+
+  document_type: MyString
+
+two:
+  id: 2
+
+  id: 
+
+  commit_message: MyString
+
+  attachment: MyString
+
+  created_by: MyString
+
+  created_date: 2011-05-19 16:35:38
+
+  document_type: MyString
+

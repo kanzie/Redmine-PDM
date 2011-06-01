@@ -1,0 +1,15 @@
+<h3>Category list</h3>
+<p><label><%=l(:label_category)%></label><br />
+<!-- This list prints out all the already existing categories from the database table -->
+<ul>
+<% @categories.each do |category| %>	
+	<li><%= category.name %></li>
+<% end %>
+</ul>
+<!-- This form_tag allows the user to fill in a new category name and then press the submit button
+        to call the add_category function from the categories controller -->
+<%= form_tag ({:controller => 'pdm_categories', :action => 'add_category'}, :multipart => true) %>
+	<p><label><%=l(:label_add_category)%></label><br />
+	<%= text_field_tag('name', '', :size => 60)%></p>
+	<%= submit_tag l(:button_category_add) %>
+<%= form_tag %>

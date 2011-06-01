@@ -1,0 +1,39 @@
+<div id="Container">
+	<% form_tag(project_files_path(@project), {:action => :upload}, :multipart => true, :class => "document", :method => "post") do %>
+	
+	<div class="BrowseDoc">
+		<%= field_set_tag (:browse_document, "Upload") do %>
+		
+		<div id="FindDoc">
+
+			<%= submit_tag (:browse_document, "Find document") %>
+
+		</div>
+
+    			<%= text_field_tag (:browse_document) %><br />
+			<%= label_tag (:shortdesc, "Document Description") %>
+    			<%= text_field_tag (:shortdesc, :disabled => true) %>
+
+  	<% end %>
+
+	</div>
+
+</div>
+
+<div id="Description">
+	<%= field_set_tag (:description, "Description") do %>
+		<%= text_area_tag(:description, nil, :size => "30x10") %>
+  	<% end %>
+</div>
+
+<%= submit_tag 'Save' %>
+<%= submit_tag 'Cancel' %>
+<% end %>
+
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'DocumentUploadForm', :plugin => 'redmine_pdm' %>
+<% end %>
+
+
+</body>
