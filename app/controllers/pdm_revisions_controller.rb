@@ -2,8 +2,9 @@ require 'time'
 
 class PdmRevisionsController < ApplicationController
 	    #   The global variable for the lock time
-	$timelock = 24.hours
-	$extend_time = 12.hours
+	@timelock = 24.hours
+	puts "INIT TIMELOCK: " + @timelock.inspect
+	@extend_time = 12.hours
 	before_filter :find_project, :authorize
 	cattr_accessor :storage_path
     @@storage_path = ENV['RAILS_VAR'] ? File.join(ENV['RAILS_VAR'], '/files/') : "#{RAILS_ROOT}/files/"
@@ -14,7 +15,8 @@ class PdmRevisionsController < ApplicationController
 	    #   It also checks the Time lock to see if there is any time remaining on a locked document  
     def index
         @document = PdmDocument.find(params[:id])
-        @revisions = PdmRevision.find(:all, :order => "created_date DESC", :conditions => [ "pdm_document_id = ?", @document.id ] )
+        @revisions = PdmRevision.find(:all, :order => "created_date DESC", :include=> :pdm_attachment, :conditions => [ "pdm_document_id = ?", @document.id ] )
+		puts @revisions.inspect
         checkTimelock
     end
 
@@ -101,41 +103,29 @@ class PdmRevisionsController < ApplicationController
 		    @document.save
         
         #   Validation check
-  	        if upload != nil && !comment.empty?
-    	        fileTime = Time.new.to_f
-    		    documentName = upload['datafile'].original_filename
-    		    fileName = (fileTime).to_s + "_" + documentName
-        	
-        	    directory = @@storage_path
-        	    path = File.join(directory, fileName)
-
-			    File.open(path, "wb") do |f| 
-				buffer = ""
-				while (buffer = upload['datafile'].read(8192))
-					f.write(buffer)
-				end
-			end
-  	        #   Adds a new entry in the database table for Revisions with the parameters below
-  	        #   because every initial commit in a document is the first revision
-  	        pdmrevision = PdmRevision.new(:commit_message => params[:comment], :attachment => fileName, :created_by => User.find(User.current.id), :created_date => Time.now, :pdm_document_id => params[:id])
-            pdmrevision.save
-  	        redirect_to :action => 'index', :project_id => @project, :id => @document
-		else
+  	  if upload != nil && !comment.empty?
+  	    #   Adds a new entry in the database table for Revisions with the parameters below
+  	    pdmrevision = PdmRevision.new(:commit_message => params[:comment], :created_by => User.find(User.current.id), :created_date => Time.now, :pdm_document_id => params[:id])
+        pdmrevision.save
+        attachment = PdmAttachment.create_attachment(upload['datafile'], pdmrevision.id)
+  	    redirect_to :action => 'index', :project_id => @project, :id => @document
+		  else
 		    @document.update_attributes(:locked_by => nil, :timestamp_expires => nil)
-			redirect_to :action => 'index', :project_id => @project, :id => @document			
-		end			
-	end
+			  redirect_to :action => 'index', :project_id => @project, :id => @document			
+		  end			
+	    end
 	
 	end
 	
   
         #   The changeLock function changes a document from being locked to unlocked based on current state
     def changeLock
+      timelock = 24.hours
 	    @project = Project.find(params[:project_id])
         @document = PdmDocument.find(params[:id])
-		
+		  puts "TIMELOCK" + @timelock.inspect
 	    if @document.locked_by == nil	    
-		    @document.update_attributes(:locked_by => User.current.id, :timestamp_expires => Time.now + $timelock)
+		    @document.update_attributes(:locked_by => User.current.id, :timestamp_expires => Time.now + timelock)
 		    @document.save
 		
 		#   This checks to see if the current user is the one that has locked the document, or if the user has

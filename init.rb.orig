@@ -25,14 +25,14 @@ Redmine::Plugin.register :redmine_pdm do
   name 'Redmine PDM plugin'
   author 'Team Purple'
   description 'Document revision control plugin for Redmine'
-  version '1.0.0'
+  version '0.5.9'
   url ''
   author_url ''
   
   # This plugin contains settings
-  #settings :default => {
-  #  'Say hello to world?' => ''
-  #}, :partial => 'settings/pdm_settings'
+  settings :default => {
+    'Say hello to world?' => ''
+  }, :partial => 'settings/pdm_settings'
   
   # This plugin adds a project module
   # It can be enabled/disabled at project level (Project settings -> Modules)    

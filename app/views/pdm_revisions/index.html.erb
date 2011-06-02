@@ -1,14 +1,9 @@
 <h2><%=l(:label_my)%></h2>
 
-<!--This is the upload window that appears after the check in button is pressed.
-    It contains labels explaining the different fields and buttons and allows the
-    user to upload a file and then check in, alternatively just unlocking the document
-    if no new upload is provided-->
-    
 <div id='uploadDiv' style='display:none;'>
 	<%= form_tag ({:controller => 'pdm_revisions', :action => 'uploadNewRevision', :project_id => @project, :id => @document}, :multipart => true) %>
 		<h3><%= l(:label_file_upload) %></h3>	
-		<p><label for="upload_datafile"><%= l(:label_select_file) %></label> :<%= l(:label_max_file_size) %> <%= number_to_human_size(Setting.file_max_size_displayed.to_i.megabytes) %>
+		<p><label for="upload_datafile"><%= l(:label_select_file) %></label> :<%= l(:label_max_file_size) %> <%= number_to_human_size(Setting.file_max_size_displayed.to_i.megabytes/1000) %>
 		    <%= file_field 'upload', 'datafile', :size => 30 %>		
 		    <label for="comment">Add comment</label> : </p>
 	
@@ -23,7 +18,7 @@
 
 <div id="Container">
 <fieldset id="containerFieldset">
-	<!--This fieldset contains the information about the document. Name, uploaded and revision number-->
+	
 	<legend><%=@document.title%></legend>
 		<div id="documentContainer">
 		<fieldset id="documentInfo">
@@ -54,24 +49,28 @@
 	            </div>
 	     
 	        <%end%>
-			<!--This box triggers the download latest-function in the revisions controller-->			
+						
 			<div class="button">
-			    <%=link_to l(:link_download_latest), :controller => "pdm_revisions", :action => "downloadLatest", :project_id => @project, :id => @document%>
+			    <%=link_to l(:link_download_latest), :controller => "pdm_attachments", :action => "downloadLatest", :id => @document.id%>
 			</div>
 			
 		
-			<div style="float: left;">
+			<div class="documentInfoHeader">
+				<p>
 				<span class="labelBold"><%=l(:label_document_name)%></span>
 				<span class="labelSimple"><%= @document.title %></span>
-				<span class="labelBold"><%=l(:label_document_type)%></span>
-				<span class="labelSimple">Document type</span>
+				</p>
+				<p>
+				<span class="labelBold"><%=l(:label_document_created)%></span>
+				<span class="labelSimple"><%= @revisions[0].created_date %></span>
 				<span class="labelBold">
 					<%= l(:label_document_revisions) %>
 				</span>
 				<span class="labelSimple"><%= @revisions.count%></span>
+				</p>
 			</div>
 
-			<!--This fieldset contains the information for when a document is locked. Who locked it and how much longer it will remain locked-->
+			
 			<fieldset class="fieldsetDetailview" style="clear: both;">
 				<p class="descriptionText"><%= @document.description %></p>
 			</fieldset>
@@ -81,27 +80,35 @@
 				<span class="labelSimple"><%= User.find(@document.locked_by) %></span>
 				<span class="labelBold"><%=l(:label_lock_time)%></span>
 				<span class="labelSimple"><%= @document.timestamp_expires %></span>
-
-				<% 
-				# If the current user has locked the document, a link for extending the lock with 12 hours appears
-				if @document.locked_by == User.current.id %>
-				    <span class="extend labelSimple">
-				    <%=link_to l(:label_extend_timelock), :controller => "pdm_revisions", :action => "extend_timelock", :project_id => @project, :id => @document%></span>
+			<%# If the current user has locked the document, a link for extending the lock with 12 hours appears %>
+				<% if @document.locked_by == User.current.id %>
+				<span class="extend labelSimple smallButton">
+					<%=link_to l(:label_extend_timelock), :controller => "pdm_revisions", :action => "extend_timelock", :project_id => @project, :id => @document%></span>
 				<% end %>
 			<% end %>
-		</fieldset>
 		</div>
-	<!--This is a loop that prints out all the revisions in the database that are bound to the current document-->	
-	<% @revisions.each do |revision| %>	
+	<%
+		@revisions.each do |revision| 
+	%>	
 		<div class="revisionContainer">
-	 			<fieldset>
-				<legend>Revision: </legend>
+	 			<div class="revInfo">
+	 				<p>
 					<span class="labelBold"><%=l(:label_revision_updated_by)%></span>
 					<span class="labelSimple"><%= User.find(revision.created_by) %></span>
 					<span class="labelBold"><%=l(:label_revision_date)%></span>
 					<span class="labelSimple"><%=revision.created_date %></span>
+					<span class="labelBold"><%=l(:label_revision_type)%></span>
+					<span class="labelSimple"><%= revision.pdm_attachment.content_type %></span>
+					</p>
+					<p>
+					<span class="labelBold"><%=l(:label_revision_filename)%></span>
+					<span class="labelSimple"><%= revision.pdm_attachment.filename %></span>					
+					<span class="labelBold"><%=l(:label_revision_size)%></span>
+					<span class="labelSimple"><%= number_to_human_size(revision.pdm_attachment.filesize.to_i.kilobytes/1000) %></span>					
+					</p>
+	 			</div>
 					<div class="downloadBox">
-					<%= link_to image_tag("download.png", :border=>0, :plugin => "redmine_pdm"), :action => 'download', :controller => 'pdm_revisions', :project_id => @project, :id => @revision.id
+					<%= link_to image_tag("download.png", :border=>0, :plugin => "redmine_pdm"), :action => 'download', :controller => 'pdm_attachments', :id => revision.pdm_attachment.id
 					
 					#link_to l(:link_revision_download), :controller => "pdm_revisions", :action => "download", :project_id => @project, :id => revision.id
 					%>
@@ -109,10 +116,9 @@
 					<div class="fieldsetDetailview">
 						<p class="descriptionText"><%=revision.commit_message %></p>
 					</div>
-	 			</fieldset>
 		</div>
 	<% end %>
-	<!--This box calls the archive function in the documents controller-->
+	
 	<div class="deleteBox">
     <%= link_to image_tag("delete.png", :class => "deleteIcon", :plugin => "redmine_pdm"), {:action => 'archive', :controller => 'pdm_documents', :project_id => @project, :id => @document.id}, :confirm => "This will delete the document and all revisions, are you sure?"
 	#link_to l(:link_hide_and_archive), :controller => "pdm_documents", :action => "archive" , :project_id => @project, :id => @document.id

@@ -16,7 +16,7 @@
 			<label for="upload_datafile"><%= l(:label_select_file) %></label>: 
 			<%= file_field 'upload', 'datafile', :size => 30 %>
 		</p>		
-		<p><%= l(:label_max_file_size) %> <%= number_to_human_size(Setting.file_max_size_displayed.to_i.megabytes/1000) %></p>
+		<p><%= l(:label_max_file_size) %> <%= number_to_human_size(Setting.file_max_size_displayed.to_i.megabytes) %></p>
 		<p>
 			<label><%=l(:label_category)%></label><br />
 			<%= collection_select(:name, :id, @categories, :id, :name, options ={}, :class =>"category") %>
@@ -49,11 +49,11 @@
 			if not @documents.nil? %>
 			 	<% @documents.each do |document| %>
 				  <tr class="document <%= cycle("odd", "even") %>">
-					<td class="centerTd"><%= link_to(image_tag('document.png'), { :controller => 'pdm_attachments', :action => 'downloadLatest', :id => document.id}) %></td>
+					<td class="centerTd"><%= link_to(image_tag('document.png'), { :controller => 'pdm_revisions', :action => 'downloadLatest', :project_id => @project, :id => document.id}) %></td>
 					<td><%= link_to(document.pdm_category.name, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
 					<td><%= link_to(document.title, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
-				   	<td class="centerTd"><%= link_to(document.pdm_revisions.last.created_date, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
-					<td><%= link_to(User.find(document.pdm_revisions.last.created_by), { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
+				   	<td class="centerTd"><%= link_to(document.pdm_revisions[0].created_date, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
+					<td><%= link_to(User.find(document.last_revision_by), { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
 					<td class="centerTd"><%= link_to(document.pdm_revisions.count, { :controller => "pdm_revisions", :action => "index" , :id => document, :project_id => @project }) %></td>
 				  </tr>
 				<% end %>

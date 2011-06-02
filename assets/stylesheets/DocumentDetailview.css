@@ -34,23 +34,26 @@
 #documentInfo
 {
     background-color:#507AAA;
-    border:2px solid #2C4056;
     padding-top: 10px;
     color: #fff;
 }
 
 .revisionContainer
 {
-	padding:15px;
-}
-
-.revInfo
-{
     background-color:#f6f7f8;
     border:2px solid #507AAA;
     -moz-border-radius: 15px;
     border-radius: 15px;
+	margin:15px;
+	width: 870px;	
+	float: left;
 }
+
+.revInfo
+{
+	width: 840px;
+}
+
 .button
 {
     padding:8px;
@@ -65,11 +68,25 @@
     margin-right: 10px;
 }
 
+.smallButton
+{
+    float:right;
+    border:2px solid #2c4056;
+    background-color:#f6f7f8;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
 .fieldsetDetailview
 {
     background-color:#f6f7f8;
     padding:5px;
     margin:10px;
+    width: 740px;
 	
 }
 
@@ -117,3 +134,7 @@
     background-color:#f6f7f8;    
 }
 
+.documentInfoHeader {
+	float: left;
+	width: 550px;
+}
