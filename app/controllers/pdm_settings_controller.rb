@@ -10,7 +10,6 @@ class PdmSettingsController < ApplicationController
   end
   
   def add_category
-  	puts "OK"
 	category_name = params[:name]
 	pdmcategory = PdmCategory.new(:name => category_name)
 	pdmcategory.save

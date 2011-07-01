@@ -3,7 +3,6 @@ require 'time'
 class PdmRevisionsController < ApplicationController
 	    #   The global variable for the lock time
 	@timelock = 24.hours
-	puts "INIT TIMELOCK: " + @timelock.inspect
 	@extend_time = 12.hours
 	before_filter :find_project, :authorize
 	cattr_accessor :storage_path
@@ -16,7 +15,6 @@ class PdmRevisionsController < ApplicationController
     def index
         @document = PdmDocument.find(params[:id])
         @revisions = PdmRevision.find(:all, :order => "created_date DESC", :include=> :pdm_attachment, :conditions => [ "pdm_document_id = ?", @document.id ] )
-		puts @revisions.inspect
         checkTimelock
     end
 
@@ -123,7 +121,6 @@ class PdmRevisionsController < ApplicationController
       timelock = 24.hours
 	    @project = Project.find(params[:project_id])
         @document = PdmDocument.find(params[:id])
-		  puts "TIMELOCK" + @timelock.inspect
 	    if @document.locked_by == nil	    
 		    @document.update_attributes(:locked_by => User.current.id, :timestamp_expires => Time.now + timelock)
 		    @document.save
