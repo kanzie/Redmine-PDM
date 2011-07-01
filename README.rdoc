@@ -1,3 +1,60 @@
-= pdm
+== Project Document Manager (PDM)
+ 
+This plug-in is built inspired by the already existing documents panel in Redmine, but putting all the documents in a comprehensive list with meta data and allowing each document to store numerous revisions.
 
-Description goes here
+This allows users to create documents, choose a category which they belong to, a document name and it will gather the information of who last updated it and at which time it was last updated. The detail view that shows the list of revisions for a document also shows who created it, allows time locking of the document so that no one else may intervene and separate downloads for every revision. This makes version control and version handling much easier than it has to be.
+  
+== Installation 
+ 
+  cd ~/myapp 
+  ruby script/plugin install git://github.com/kanzie/Redmine-PDM.git
+ 
+ Then rake the database and migrate:
+	rails_env=production rake db:migrate_plugins
+
+== Instruction manual
+
+Permission levels:
+Read - Allows the user to see the documents and revisions, and to download these.
+Write - Allows the user to create documents and revisions, lock documents, and check in new revisions.
+Administration - Allows the user to add more categories and force unlock on locked documents. 
+
+
+- Adding more members
+Be sure to give the different member roles the proper permissions. 
+For example: read- and write permission for developers and both the before mentioned and settings permission for manager.
+
+- Adding more categories
+For a user with the settings permission, one goes into administration and then PDM Categories.
+
+- Checking out and checking in a document
+When checking out a revision, the document will be locked and no one else will be able to touch it until the lock is up, either by the time running out or that the user has checked in a new revision or simply removing the time lock himself.
+A user with the settings permission is able to force an unlock on a locked document if it is needed.
+
+== Extra notes
+
+- Archive function
+The delete button does not exactly delete the document which might be implicated, but actually archives the document so that it is still in the database but does not show up in the document list.
+	
+	
+== Acknowledgments 
+
+Thanks to:
+Göran Hagert
+Susanne Frennert
+Henrik Neckfors
+
+Purple Scout - http://www.purplescout.se/
+ 
+== Authors
+ 
+Christian Nilsson - kanzie@gmail.com
+Patrik Olsen - patrik.olsen90@gmail.com
+Markus Ristola - ristola@mixtape.be
+Rickard Johansson Thomsen - rickardjoha@gmail.com
+ 
+== TODO 
+ 
+* Setting for changing the time lock period in the interface
+* Being able to edit a document
+* Add support for the admin to display and retrieve archived documents.
