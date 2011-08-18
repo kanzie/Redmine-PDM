@@ -10,7 +10,7 @@ This allows users to create documents, choose a category which they belong to, a
   ruby script/plugin install git://github.com/kanzie/Redmine-PDM.git
  
  Then rake the database and migrate:
-	rails_env=production rake db:migrate_plugins
+  rails_env=production rake db:migrate_plugins
 
 == Instruction manual
 
